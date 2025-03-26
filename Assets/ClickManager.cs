@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class ClickManager : MonoBehaviour
@@ -19,33 +20,45 @@ public class ClickManager : MonoBehaviour
     {
         StartCoroutine(gameManager.MoveToPoint(player,item.GoToPoint.position));
         playerWalking = true;
-        TryGettingItem(item);
-        StartCoroutine(UpdateSceneAfterAction(item));
+        TryGettingItem(item); 
     }
 
     
 
+
     void TryGettingItem(ItemData item)
     {
-        if (item.requiredItemID == -1 || GameManager.collectedItems.Contains(item.requiredItemID))
+        bool canGetItem = item.requiredItemID == -1 || GameManager.collectedItems.Contains(item.requiredItemID);
+        if (canGetItem)
         {
             GameManager.collectedItems.Add(item.itemID);
-            
-            
         }
+        StartCoroutine(UpdateSceneAfterAction(item, canGetItem));
+
     }
 
-    private IEnumerator UpdateSceneAfterAction(ItemData item)
+
+
+
+    private IEnumerator UpdateSceneAfterAction(ItemData item, bool canGetItem)
     {
         while (playerWalking) 
             yield return new WaitForSeconds(0.005f);
+        if (canGetItem) //removes the item if the method check is correct. 
+                        //Item has to be added to objectstoremove list.
+        {
+            foreach (GameObject g in item.objectsToRemove)
+                Destroy(g);
+            Debug.Log("Item Picked up");
+        }
 
-        foreach (GameObject g in item.objectsToRemove)
-            Destroy(g);
+        else
+        {
+            gameManager.UpdateHintBox(item, player.GetComponentInChildren<SpriteRenderer>().flipX);
+            gameManager.CheckSpecialConditions(item);
 
-        Debug.Log("Item Picked up");
-        yield return null;
+
+            yield return null;
+        }
     }
-
-
 }
