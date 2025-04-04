@@ -16,6 +16,10 @@ public class GameManager : MonoBehaviour
     int activeLocalScene = 0;
     public Transform[] playerStartPositions;
 
+    private bool isTransitioning = false;  // Add this flag
+
+
+
 
 
     public IEnumerator MoveToPoint(Transform myObject, Vector2 point)
@@ -51,7 +55,7 @@ public class GameManager : MonoBehaviour
         hintBox.sizeDelta = Item.hintBoxSize;
         //change the size of the box
         if (playerFlipped)
-             hintBox.localPosition = new Vector2(Item.nameTagSize.x / 2, -1.5f);
+             hintBox.localPosition = new Vector2(Item.nameTagSize.x / 3, -1.5f);
          
     }
 
@@ -74,7 +78,7 @@ public class GameManager : MonoBehaviour
                 StartCoroutine(ChangeScene(0, 0));
                 break;
 
-            case -1:
+            case -13:
                 StartCoroutine(ChangeScene(2, 1));
                 break;
         }
@@ -82,7 +86,7 @@ public class GameManager : MonoBehaviour
 
 
 
-        public IEnumerator ChangeScene(int sceneNumber, float delay)
+    public IEnumerator ChangeScene(int sceneNumber, float delay)
     {
         Color c = blockingImage.color;
         blockingImage.enabled = true;
@@ -106,7 +110,10 @@ public class GameManager : MonoBehaviour
         localScenes[sceneNumber].SetActive(true);
         activeLocalScene = sceneNumber;
         FindObjectOfType<ClickManager>().player.position = playerStartPositions[sceneNumber].position;
-
+        foreach(SpriteAnimator spriteAnimator in FindObjectsOfType<SpriteAnimator>())
+        {
+            spriteAnimator.PlayAnimation(null);
+        }
 
 
         while (blockingImage.color.a > 0)
@@ -123,18 +130,107 @@ public class GameManager : MonoBehaviour
 
     public void RestartGame()
     {
-       SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    public void Start()
+    public void StartGame()
     {
-        StartCoroutine(ChangeScene(0, 0));
+
+    }
+
+
+    public IEnumerator GlobalSceneTransition(int sceneIndex)
+    {
+        Color c = blockingImage.color;
+        blockingImage.enabled = true;
+
+        // Fade in
+        while (blockingImage.color.a < 1)
+        {
+            c.a += Time.deltaTime;
+            blockingImage.color = c;
+            yield return null;
+        }
+        c.a = 1;
+        blockingImage.color = c;
+
+        // Load the new scene
+        yield return new WaitForSeconds(1);
+        SceneManager.LoadScene(sceneIndex);
+
+        // Give the new scene time to initialize
+        yield return new WaitForSeconds(0.5f);
+
+        foreach (SpriteAnimator spriteAnimator in FindObjectsOfType<SpriteAnimator>())
+        {
+            spriteAnimator.PlayAnimation(null);
+        }
+
+        // Fade out
+        while (blockingImage.color.a > 0)
+        {
+            c.a -= Time.deltaTime;
+            blockingImage.color = c;
+            yield return null;
+        }
+        c.a = 0;
+        blockingImage.color = c;
+        blockingImage.enabled = false;
+
+    }
+
+    public void ChangeMainScene(int sceneIndex)
+    {
+        StartCoroutine(GlobalSceneTransition(sceneIndex));
     }
 
 
 
+
+
+    //CUTSCENE CHANGE HANDLE CODE BELOW
+    //UNSUBSCRIBING TO GM IN CASE OF SCENE CHANGE
+
+    void Start()
+    {
+
+        BackgroundController.OnCutsceneEnd += HandleCutsceneEnd;
+    }
+
+    void OnDestroy()
+    {
+        BackgroundController.OnCutsceneEnd -= HandleCutsceneEnd;
+    }
+
+    void OnDisable()
+    {
+        BackgroundController.OnCutsceneEnd -= HandleCutsceneEnd;
+    }
+
+
+
+    private void HandleCutsceneEnd()
+    {
+        if (isTransitioning) return;  // Prevent multiple transitions
+        isTransitioning = true;       // Lock transition
+
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        int nextSceneIndex = currentSceneIndex + 1;
+
+        if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
+        {
+            StartCoroutine(GlobalSceneTransition(nextSceneIndex));
+        }
+        else
+        {
+            Debug.LogWarning("No more scenes to load! Reached the end of the build order.");
+        }
+    }
+
+
+
+
+    //Width: 19.16 * 2
+    //height: 10.8 * 2
 
 }
-
-
-

@@ -7,9 +7,10 @@ using UnityEngine;
 public class AnimationData : ScriptableObject
 {
 
-    public static float targetFrameTim = 0.0167f;
-    public int frameOfGap;
+    public static float targetFrameTime = 0.0167f;
+    public int framesOfGap;
     public Sprite[] sprites;
-
+    public bool loop;
+    public bool returnToBase;
 
 }

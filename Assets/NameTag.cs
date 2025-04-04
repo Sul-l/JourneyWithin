@@ -25,5 +25,5 @@ public class NameTag : MonoBehaviour
     }
 
     //Width: 19.16 * 2
-    //height: 10.8
+    //height: 10.8 * 2
 }

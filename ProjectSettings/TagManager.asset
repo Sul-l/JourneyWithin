@@ -50,6 +50,9 @@ TagManager:
   - name: Background
     uniqueID: 575590131
     locked: 0
+  - name: Train
+    uniqueID: 751338151
+    locked: 0
   - name: Player
     uniqueID: 1873748763
     locked: 0
