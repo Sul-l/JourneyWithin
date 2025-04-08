@@ -29,6 +29,24 @@ public class SpriteAnimator : MonoBehaviour
             previousAnimation = StartCoroutine(PlayAnimationCoroutine(data));
     }
 
+    public IEnumerator PlayerAnimation(AnimationData data)
+    {
+        int spriteAmount = data.sprites.Length, i=0;
+        float waitTime = data.framesOfGap * AnimationData.targetFrameTime;
+        while (i < spriteAmount)
+        {
+            //play sound
+            //change sprite and increase i
+            mySpriteRenderer.sprite = data.sprites[i++];
+            yield return new WaitForSeconds(waitTime);
+            
+
+            if (data.loop && i>=spriteAmount)
+                i = 0;
+        }
+        yield return null;
+    }
+
     public IEnumerator PlayAnimationCoroutine(AnimationData data)
     {
         int spritesAmount = data.sprites.Length, i = 0;
@@ -50,6 +68,4 @@ public class SpriteAnimator : MonoBehaviour
             PlayAnimation(baseAnimation);
         yield return null;
     }
-
-
 }

@@ -19,8 +19,10 @@ public class ClickManager : MonoBehaviour
     public void GoToItem(ItemData item)
     {
         StartCoroutine(gameManager.MoveToPoint(player,item.GoToPoint.position));
+        StartCoroutine(player.GetComponent<SpriteAnimator>().PlayerAnimation(gameManager.playerAnimations[1]));
         playerWalking = true;
         TryGettingItem(item); 
+        //this is a test to see if the item can be picked up.
     }
 
     

@@ -12,5 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73c2ebecdfac8b043bb5c0c139282978, type: 3}
   m_Name: Player Walk
   m_EditorClassIdentifier: 
-  frameOfGap: 0
-  sprites: []
+  framesOfGap: 9
+  sprites:
+  - {fileID: 1609349941, guid: c3234aece98aee14399bdfecd76b86ba, type: 3}
+  - {fileID: -493136668, guid: c3234aece98aee14399bdfecd76b86ba, type: 3}
+  - {fileID: 1327714668, guid: c3234aece98aee14399bdfecd76b86ba, type: 3}
+  - {fileID: 1287217485, guid: c3234aece98aee14399bdfecd76b86ba, type: 3}
+  - {fileID: 1181516814, guid: c3234aece98aee14399bdfecd76b86ba, type: 3}
+  - {fileID: -142618415, guid: c3234aece98aee14399bdfecd76b86ba, type: 3}
+  - {fileID: 505194959, guid: c3234aece98aee14399bdfecd76b86ba, type: 3}
+  - {fileID: -699098513, guid: c3234aece98aee14399bdfecd76b86ba, type: 3}
+  - {fileID: 505194959, guid: c3234aece98aee14399bdfecd76b86ba, type: 3}
+  - {fileID: -142618415, guid: c3234aece98aee14399bdfecd76b86ba, type: 3}
+  - {fileID: 1181516814, guid: c3234aece98aee14399bdfecd76b86ba, type: 3}
+  - {fileID: 1287217485, guid: c3234aece98aee14399bdfecd76b86ba, type: 3}
+  - {fileID: 1327714668, guid: c3234aece98aee14399bdfecd76b86ba, type: 3}
+  - {fileID: -493136668, guid: c3234aece98aee14399bdfecd76b86ba, type: 3}
+  - {fileID: 1609349941, guid: c3234aece98aee14399bdfecd76b86ba, type: 3}
+  loop: 1
+  returnToBase: 1

@@ -15,8 +15,12 @@ public class GameManager : MonoBehaviour
     public GameObject[] localScenes;
     int activeLocalScene = 0;
     public Transform[] playerStartPositions;
+    public AnimationData[] playerAnimations;
 
     private bool isTransitioning = false;  // Add this flag
+
+
+
 
 
 
@@ -69,6 +73,9 @@ public class GameManager : MonoBehaviour
             //if item id == something, go to scene 2
             //if item id == something, end game
 
+            case -10:
+                StartCoroutine(ChangeScene(1, 0));
+                break;
 
             case -11:
                 StartCoroutine(ChangeScene(1, 0));
@@ -79,7 +86,15 @@ public class GameManager : MonoBehaviour
                 break;
 
             case -13:
-                StartCoroutine(ChangeScene(2, 1));
+                StartCoroutine(ChangeScene(1, 0));
+                break;
+
+            case -14:
+                StartCoroutine(ChangeScene(2, 0));
+                break;
+
+            case -15:
+                StartCoroutine(ChangeScene(3, 0));
                 break;
         }
     }
@@ -109,8 +124,12 @@ public class GameManager : MonoBehaviour
         localScenes[activeLocalScene].SetActive(false);
         localScenes[sceneNumber].SetActive(true);
         activeLocalScene = sceneNumber;
-        FindObjectOfType<ClickManager>().player.position = playerStartPositions[sceneNumber].position;
-        foreach(SpriteAnimator spriteAnimator in FindObjectsOfType<SpriteAnimator>())
+        if (sceneNumber < playerStartPositions.Length && playerStartPositions[sceneNumber] != null)
+        {
+            FindObjectOfType<ClickManager>().player.position = playerStartPositions[sceneNumber].position;
+        }
+
+        foreach (SpriteAnimator spriteAnimator in FindObjectsOfType<SpriteAnimator>())
         {
             spriteAnimator.PlayAnimation(null);
         }
@@ -135,8 +154,8 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-
     }
+
 
 
     public IEnumerator GlobalSceneTransition(int sceneIndex)
@@ -226,10 +245,6 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning("No more scenes to load! Reached the end of the build order.");
         }
     }
-
-
-
-
     //Width: 19.16 * 2
     //height: 10.8 * 2
 
