@@ -8,16 +8,29 @@ using UnityEditor.SearchService;
 
 public class GameManager : MonoBehaviour
 {
-    public static List<int> collectedItems = new  List<int>();
-    static float moveSpeed = 3.5f, moveAccuracy = 0.15f;
+    [Header("Setup")]
     public RectTransform nameTag, hintBox;
+    public AnimationData[] playerAnimations;
+
+
+    [Header("Local Scenes")]
     public Image blockingImage;
     public GameObject[] localScenes;
     int activeLocalScene = 0;
     public Transform[] playerStartPositions;
-    public AnimationData[] playerAnimations;
 
-    private bool isTransitioning = false;  // Add this flag
+    [Header("Equipment")]
+    public GameObject equipmentCanvas;
+    public Image[] equipmentSlots, equipmentImages;
+    public Sprite emptyItemSlotSprite;
+    public Color selectedItemColor;
+    public int selectedCanvasSlotID = 0, selectedItemID = -1;
+
+
+    public static List<ItemData> collectedItems = new  List<ItemData>();
+    static float moveSpeed = 3.5f, moveAccuracy = 0.15f;
+    
+    private bool isTransitioning = false;  
 
 
 
@@ -63,7 +76,65 @@ public class GameManager : MonoBehaviour
          
     }
 
+    public void HideHintBox()
+    {
+        hintBox.GetComponentInChildren<TextMeshProUGUI>().text = "";
+        hintBox.sizeDelta = new Vector2(0, 0);
+        hintBox.localPosition = new Vector2(0, 0);
+    }
 
+    //EQUIPMENT CODE
+    public void SelectItem(int  equipmentCanvasID)
+    {
+        Color c = Color.white;
+        c.a = 0;
+        //change alpha of previous slot to 0
+        equipmentSlots[selectedCanvasSlotID].color = c;
+
+        if (equipmentCanvasID>= collectedItems.Count)
+        {
+            selectedItemID = -1;
+            selectedCanvasSlotID = 0;
+            return;
+        }
+
+        //change alpha of new slot to x
+        equipmentSlots[equipmentCanvasID].color = selectedItemColor;
+
+        selectedCanvasSlotID = equipmentCanvasID;
+        selectedItemID = collectedItems[selectedCanvasSlotID].itemID;
+
+    }
+
+    public void ShowItemName(int equipmentCanvasID)
+    {
+        if (equipmentCanvasID < collectedItems.Count)
+            UpdateNameTag(collectedItems[equipmentCanvasID]);
+
+    }
+
+    public void UpdateEquipmentCanvas()
+    {
+        //find out how many items we have and when to stop
+        int itemsAmount = collectedItems.Count, itemSlotsAmount = equipmentSlots.Length;
+        //replace no item sprites and old sprites with collectedItems[x].itemSlotSprite
+        for (int i = 0; i < itemSlotsAmount; i++)
+        {
+            //choose between emptyItemSlotSprite and an item sprite
+            if (i < itemsAmount && collectedItems[i].itemSlotSprite != null)
+                equipmentImages[i].sprite = collectedItems[i].itemSlotSprite;
+            else
+                equipmentImages[i].sprite = emptyItemSlotSprite;
+        }
+        //add special conditions for selecting items
+        if (itemsAmount == 0)
+            SelectItem(-1);
+        else if (itemsAmount == 1)
+            SelectItem(0);
+    }
+
+
+    //SCENE TRANSITION CODE
     public void CheckSpecialConditions(ItemData item)
 
     {
@@ -90,7 +161,7 @@ public class GameManager : MonoBehaviour
                 break;
 
             case -14:
-                StartCoroutine(ChangeScene(2, 0));
+                StartCoroutine(ChangeScene(2, 1));
                 break;
 
             case -15:

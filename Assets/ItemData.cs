@@ -12,9 +12,11 @@ public class ItemData : MonoBehaviour
 
     [Header("Item picked up")]
     public GameObject[] objectsToRemove;
+    public GameObject[] objectsToActivate;
+    public Sprite itemSlotSprite;
 
     [Header("Fail/Cant pick up")]
-    [TextArea(3,3)]
+    [TextArea(4,4)]
     public string hintMessage;
-    public Vector2 hintBoxSize = new Vector2(3,0.65f);
+    public Vector2 hintBoxSize = new Vector2(4,0.65f);
 }

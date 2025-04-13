@@ -19,7 +19,7 @@ public class ClickManager : MonoBehaviour
     public void GoToItem(ItemData item)
     {
         StartCoroutine(gameManager.MoveToPoint(player,item.GoToPoint.position));
-        StartCoroutine(player.GetComponent<SpriteAnimator>().PlayerAnimation(gameManager.playerAnimations[1]));
+        player.GetComponent<SpriteAnimator>().PlayAnimation(gameManager.playerAnimations[1]);
         playerWalking = true;
         TryGettingItem(item); 
         //this is a test to see if the item can be picked up.
@@ -30,10 +30,10 @@ public class ClickManager : MonoBehaviour
 
     void TryGettingItem(ItemData item)
     {
-        bool canGetItem = item.requiredItemID == -1 || GameManager.collectedItems.Contains(item.requiredItemID);
+        bool canGetItem = item.requiredItemID == -1 || GameManager.collectedItems.Contains(item);
         if (canGetItem)
         {
-            GameManager.collectedItems.Add(item.itemID);
+            GameManager.collectedItems.Add(item);
         }
         StartCoroutine(UpdateSceneAfterAction(item, canGetItem));
 
@@ -45,12 +45,13 @@ public class ClickManager : MonoBehaviour
     private IEnumerator UpdateSceneAfterAction(ItemData item, bool canGetItem)
     {
         while (playerWalking) 
-            yield return new WaitForSeconds(0.005f);
+            yield return new WaitForSeconds(0.05f);
         if (canGetItem) //removes the item if the method check is correct. 
                         //Item has to be added to objectstoremove list.
         {
             foreach (GameObject g in item.objectsToRemove)
                 Destroy(g);
+            player.GetComponent<SpriteAnimator>().PlayerAnimation(null);
             Debug.Log("Item Picked up");
         }
 
